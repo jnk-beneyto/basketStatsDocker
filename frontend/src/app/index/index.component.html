@@ -1,0 +1,321 @@
+<div class="container main">
+
+  <!-- search engine -->
+
+  <div class="row d-flex justify-content-center">
+    <div class="col-xs-12 col-sm-10 col-md-10 col-lg-10">
+      <div class="row mx-auto">
+        <div class="mt-2 col-xs-12 col-sm-2 col-md-2 col-lg-2 text-center">
+          <h4>URL: <a href="https://www.basquetcatala.cat/llistatCompeticions/llistatcategories/RO02018"
+              target="_blank">link</a> </h4>
+        </div>
+        <div class="mt-2 col-xs-12 col-sm-7 col-md-7 col-lg-7">
+          <input [(ngModel)]="laUrl" type="url" class="w-100" required autofocus [disabled]="btnPress"
+            placeholder="https://www.basquetcatala.cat/competicions-anteriors/resultat/xxxx/xxx/xx/xx">
+        </div>
+        <div class="mt-2 col-xs-12 col-sm-1 col-md-1 col-lg-1 text-center">
+          <button (click)="getUrl()" class="bg-primary w-75" [disabled]="btnPress">GO</button>
+        </div>
+        <div class=" mt-2 col-xs-12 col-sm-2 col-md-2 col-lg-2 text-center" *ngIf="cargandoEquipos == true">
+          <div class="lds-ring">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 offset-4" *ngIf="errorEmpty == true">
+      <div class="error bg-danger text-center">
+        Introduzca url de basquetcatala.cat
+      </div>
+    </div>
+    <div class="col-md-4 offset-4" *ngIf="errorNoResults == true">
+      <div class="error bg-danger text-center">
+        url incorrecta, no se pudo extraer datos
+      </div>
+    </div>
+  </div>
+
+  <!-- end search engine -->
+
+  <!-- DATA -->
+
+  <div class="row mt-3" *ngIf="errorNoResults == false">
+    <div class="container">
+      <div class="row text-center" *ngIf="cargandoEquipos == false">
+        <div class="mt-2 col-xs-12 col-sm-12 col-md-12 col-lg-3 text-center"> <strong>Selecciona:</strong> </div>
+        <div class="mt-2 col-xs-12 col-sm-12 col-md-12 col-lg-5 text-center">
+          <select [(ngModel)]="selectedValue" id="selectTeam" [disabled]="btnPress">
+            <option *ngFor="let equipo of equipos" [value]="equipo.nombre">{{equipo.nombre}}</option>
+          </select>
+        </div>
+        <div class="mt-2 col-xs-12 col-sm-12 col-md-12 col-lg-4 text-center" *ngIf="selectedValue">
+          <div class="row mx-auto">
+            <div class="col-4 text-center">
+              <button (click)="getResultados()" id="getData" [disabled]="btnPress"
+                class="btn btn-success">descargar</button>
+            </div>
+            <div class="col-1" *ngIf="cargandoDatos == true">
+              <div class="lds-ring">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-5" *ngIf="cargandoDatos == false">
+      <div class="row">
+
+        <!-- results  -->
+
+        <div class="container text-center">
+          <div class="row bg-light">
+            <div class="col-12 text-center">
+              <h4>EQUIPO: {{selectedValue}}</h4>
+            </div>
+          </div>
+          <div class="row mt-3 d-flex justify-content-center">
+            <div class="d-flex justify-content-center">
+              <table class="table table-striped">
+                <thead class="thead-dark">
+                  <tr>
+                    <th>equipo local</th>
+                    <th>resultado local</th>
+                    <th>equipo visitante</th>
+                    <th>resultado visitante</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let resultado of resultadosEquipoSel">
+                    <td>{{resultado.local}}</td>
+                    <td>{{resultado.resLocal}}</td>
+                    <td>{{resultado.vis}}</td>
+                    <td>{{resultado.resVis}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!--end results -->
+
+        <!-- streak as LOCAL / VISITOR -->
+
+        <div class="row mt-3" *ngIf="resComoVis">
+
+          <!-- streak as local -->
+
+          <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 my-3">
+            <div class="row">
+              <div class="col-12 text-center d-flex justify-content-center flex-column bg-light">
+                <h3> RACHAS COMO LOCAL </h3>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 text-center  d-flex justify-content-center flex-column graf">
+                <canvas baseChart [datasets]="barChartDataRl" [labels]="barChartLabelsRl" [options]="barChartOptionsRl"
+                  [legend]="barChartLegendRl" [chartType]="barChartTypeRl">
+                </canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- streak as vis -->
+
+          <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 my-3">
+            <div class="row">
+              <div class="col-12 text-center d-flex justify-content-center flex-column bg-light">
+                <h3> RACHAS COMO VISITANTE </h3>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 text-center  d-flex justify-content-center flex-column graf">
+                <canvas baseChart [datasets]="barChartDataRv" [labels]="barChartLabelsRv" [options]="barChartOptionsRv"
+                  [legend]="barChartLegendRv" [chartType]="barChartTypeRv">
+                </canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--  end streak as LOCAL / VISITOR -->
+
+        <!-- results charts as LOCAL / VISITOR -->
+
+        <div class="row mt-3" *ngIf="resComoVis">
+
+          <!-- chart as local -->
+
+          <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 my-3">
+            <div class="row">
+              <div class="col-12 text-center d-flex justify-content-center flex-column bg-light">
+                <h3> RESULTADOS COMO LOCAL </h3>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 text-center  d-flex justify-content-center flex-column graf">
+                <canvas baseChart [datasets]="barChartDataAsLoc" [labels]="barChartLabelsAsLoc"
+                  [options]="barChartOptionsAsLoc" [legend]="barChartLegendAsLoc" [chartType]="barChartTypeAsLoc">
+                </canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- chart as visitor -->
+
+          <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 my-3">
+            <div class="row">
+              <div class="col-12 text-center d-flex justify-content-center flex-column bg-light">
+                <h3> RESULTADOS COMO VISITANTE </h3>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 text-center  d-flex justify-content-center flex-column graf">
+                <canvas baseChart [datasets]="barChartDataAsVis" [labels]="barChartLabelsAsVis"
+                  [options]="barChartOptionsAsVis" [legend]="barChartLegendAsVis" [chartType]="barChartTypeAsVis">
+                </canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- end results charts as LOCAL / VISITOR -->
+
+        <!--summary WIN / LOST and AVERAGES as LOCAL / VISITOR -->
+
+        <div class="row mt-3" *ngIf="resComoVis">
+
+          <!-- summary WIN / LOST -->
+
+          <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 my-3">
+            <div class="row">
+              <div class="col-12 text-center d-flex justify-content-center flex-column bg-light">
+                <h3> Resumen Ganados / Perdidos </h3>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 text-center  d-flex justify-content-center flex-column graf">
+                <canvas baseChart [datasets]="barChartDataAsVisL" [labels]="barChartLabelsAsVisL"
+                  [options]="barChartOptionsAsVisL" [legend]="barChartLegendAsVisL" [chartType]="barChartTypeAsVisL">
+                </canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Averages points scored / points received -->
+
+          <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 my-3">
+            <div class="row">
+              <div class="col-12 text-center d-flex justify-content-center flex-column bg-light">
+                <h3> Promedios ataque / defensa </h3>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 text-center  d-flex justify-content-center flex-column graf">
+                <canvas baseChart [datasets]="barChartDataAsAvg" [labels]="barChartLabelsAsAvg"
+                  [options]="barChartOptionsAsAvg" [legend]="barChartLegendAsAvg" [chartType]="barChartTypeAsAvg">
+                </canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- end summary WIN / LOST and AVERAGES as LOCAL / VISITOR -->
+
+        <!--diferences points range WIN / LOST as LOCAL -->
+
+        <div class="row mt-3" *ngIf="resComoVis">
+
+          <!-- lost as local -->
+
+          <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 my-3">
+            <div class="row">
+              <div class="col-12 text-center d-flex justify-content-center flex-column bg-light">
+                <h3> diferencia perdidos como local </h3>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 text-center  d-flex justify-content-center flex-column graf">
+                <canvas baseChart [datasets]="barChartDataLplusL" [labels]="barChartLabelsLplusL"
+                  [options]="barChartOptionsLplusL" [legend]="barChartLegendLplusL" [chartType]="barChartTypeLplusL">
+                </canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- won as local -->
+
+          <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 my-3">
+            <div class="row">
+              <div class="col-12 text-center d-flex justify-content-center flex-column bg-light">
+                <h3> diferencia ganados como local </h3>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 text-center  d-flex justify-content-center flex-column graf">
+                <canvas baseChart [datasets]="barChartDataWplusL" [labels]="barChartLabelsWplusL"
+                  [options]="barChartOptionsWplusL" [legend]="barChartLegendWplusL" [chartType]="barChartTypeWplusL">
+                </canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- end diferences points range WIN / LOST as LOCAL -->
+
+        <!--diferences points range WIN / LOST as VISITOR -->
+
+        <div class="row mt-3" *ngIf="resComoVis">
+
+          <!-- won as vis -->
+
+          <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 my-3">
+            <div class="row">
+              <div class="col-12 text-center d-flex justify-content-center flex-column bg-light">
+                <h3> diferencia perdidos como visitante </h3>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 text-center  d-flex justify-content-center flex-column graf">
+                <canvas baseChart [datasets]="barChartDataLplusV" [labels]="barChartLabelsLplusV"
+                  [options]="barChartOptionsLplusV" [legend]="barChartLegendLplusV" [chartType]="barChartTypeLplusV">
+                </canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- lost as vis -->
+
+          <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 my-3">
+            <div class="row">
+              <div class="col-12 text-center d-flex justify-content-center flex-column bg-light">
+                <h3> diferencia ganados como visitante </h3>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 text-center  d-flex justify-content-center flex-column graf">
+                <canvas baseChart [datasets]="barChartDataWplusV" [labels]="barChartLabelsWplusV"
+                  [options]="barChartOptionsWplusV" [legend]="barChartLegendWplusV" [chartType]="barChartTypeWplusV">
+                </canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- end diferences points range WIN / LOST as VISITOR -->
+
+      </div>
+    </div>
+    <!-- </div> -->
+  </div>
+
+  <!-- END DATA -->
+
+</div>

@@ -11,8 +11,8 @@ requirements:
 - Docker daemon running
 
 ```
-git clone https://github.com/jnk-beneyto/docker_BasketCat_Stats.git
-cd docker_BasketCat_Stats
+git clone https://github.com/jnk-beneyto/basketStatsDocker.git
+cd basketStatsDocker
 docker-compose up
 ```
 
